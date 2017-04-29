@@ -3,6 +3,36 @@
 
 #include <stdio.h>
 
+// Row select
+#define MATRIX_A_LETTER D
+#define MATRIX_A_PIN 1
+#define MATRIX_B_LETTER D
+#define MATRIX_B_PIN 1
+#define MATRIX_C_LETTER D
+#define MATRIX_C_PIN 1
+// Red
+#define MATRIX_R1_LETTER D
+#define MATRIX_R1_PIN 1
+#define MATRIX_R2_LETTER D
+#define MATRIX_R2_PIN 1
+// Green
+#define MATRIX_G1_LETTER D
+#define MATRIX_G1_PIN 1
+#define MATRIX_G2_LETTER D
+#define MATRIX_G2_PIN 1
+// Blue
+#define MATRIX_B1_LETTER D
+#define MATRIX_B1_PIN 1
+#define MATRIX_B2_LETTER D
+#define MATRIX_B2_PIN 1
+// Latching, output enable, clk
+#define MATRIX_LAT_LETTER D
+#define MATRIX_LAT_PIN 1
+#define MATRIX_CLK_LETTER D
+#define MATRIX_CLK_PIN 1
+#define MATRIX_OE_LETTER D
+#define MATRIX_OE_PIN 1
+
 /**
  * Reprsents the type of a row or column index for the display
  */
@@ -11,6 +41,9 @@ typedef uint8_t coord_t;
 // Dimension constants
 const coord_t MATRIX_ROW_COUNT = 16;
 const coord_t MATRIX_COL_COUNT = 32;
+const unsigned int MATRIX_ISR_FREQ = 10000;
+const uint8_t MATRIX_RESOLUTION = 16;
+const uint8_t ROW_PAIR_OFFSET = 8;
 
 /**
  * Represents the RGB color (r, g, b)
@@ -26,6 +59,8 @@ typedef struct MatrixColor {
 
 typedef struct MatrixState {
   MatrixColor_t buffer[MATRIX_ROW_COUNT][MATRIX_COL_COUNT];
+  coord_t row_pair;
+  uint8_t cycle_index;
 } MatrixState_t;
 
 /**
@@ -57,6 +92,9 @@ void beginMatrix(MatrixState_t *matrix);
 /**
  * Effect: stops the timer and the updates
  */
-void endMatrix(MatrixState_t *)
+void endMatrix(MatrixState_t *);
+
+// ISR for updating display
+void PIT0_IRQHandler(void);
 
 #endif
