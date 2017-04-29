@@ -20,10 +20,9 @@ void initMatrixState(MatrixState_t *state) {
   setRect(state, 0, MATRIX_ROW_COUNT - 1, 0, MATRIX_COL_COUNT - 1, {0, 0, 0});
 }
 
-MatrixState_t *matrix_current_state = NULL :
+MatrixState_t *matrix_current_state = NULL;
 
-    void
-    beginMatrix(MatrixState_t * matrix) {
+void beginMatrix(MatrixState_t *matrix) {
   NVIC_EnableIRQ(PIT0_IRQn); /* enable PIT0 Interrupts */
 
   SIM->SCGC6 = SIM_SCGC6_PIT_MASK; // Enable clock to PIT module
