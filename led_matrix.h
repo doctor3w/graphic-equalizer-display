@@ -32,23 +32,31 @@ typedef struct MatrixState {
  * Effect: sets the pixel at (row, col) to be color
  * The bottom left is (0,0)
  */
-void setPixel(MatrixState_t* matrix, coord_t row, coord_t col, MatrixColor_t *color);
+void setPixel(MatrixState_t *matrix, coord_t row, coord_t col,
+              MatrixColor_t *color);
+
+/**
+ * Effect: sets all pixels (row, col) such that row_min <= row <= row_max &&
+ * col_min <= col <= col_max to color.
+ */
+void setRect(MatrixState_t *matrix, coord_t row_min, coord_t col_min,
+             coord_t row_max, coord_t col_max, MatrixColor_t *color);
 
 /**
  * Effect: sets all the colors to 0
  */
-void initMatrixState(MatrixState_t* state);
+void initMatrixState(MatrixState_t *state);
 
 /**
  * Effect: initializes the led matrix specified by matrix.
  * Starts in interrupt handler to continually write the buffer stored in matrix.
  * Assumes that the buffer is valid until endMatrix is called.
  */
-void beginMatrix(MatrixState_t* matrix);
+void beginMatrix(MatrixState_t *matrix);
 
 /**
  * Effect: stops the timer and the updates
  */
-void endMatrix(MatrixState_t*)
+void endMatrix(MatrixState_t *)
 
 #endif
