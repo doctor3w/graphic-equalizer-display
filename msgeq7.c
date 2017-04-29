@@ -20,7 +20,12 @@ void initMSGEQ7(MSGEQ7_t *chip) {
 /**
  * Sets up and starts the timers to begin analog read in of data
  */
-void beginMSGEQ7(MSGEQ7_t *chip);
+void beginMSGEQ7(MSGEQ7_t *chip) {
+  
+  //ADC0_SC1A |= 0x40; /* Enable interrupts and DIFF = 0 */
+  
+  
+}
 
 /**
  * Stops the timers and data reads.
