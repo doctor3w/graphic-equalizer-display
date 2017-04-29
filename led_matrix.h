@@ -35,6 +35,11 @@ typedef struct MatrixState {
 void setPixel(MatrixState_t* matrix, coord_t row, coord_t col, MatrixColor_t *color);
 
 /**
+ * Effect: sets all pixels (row, col) such that row_min <= row <= row_max && col_min <= col <= col_max to color.
+ */
+void setRect(MatrixState_t* matrix, coord_t row_min, coord_t col_min, coord_t row_max, coord_t col_max, MatrixColor_t *color);
+
+/**
  * Effect: sets all the colors to 0
  */
 void initMatrixState(MatrixState_t* state);
