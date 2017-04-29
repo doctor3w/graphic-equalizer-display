@@ -8,20 +8,8 @@
 
 #include "graphic_equalizer.h"
 
-// Height and width of matrix display
-const uint8_t WIDTH = 32;
-const uint8_t HEIGHT = 16;
-
-const uint8_t MAX_HEIGHT = 15;
-const size_t BARS_SIZE = 7;
-
-const coord_t MIN_BOUNDS[] = {2, 6, 10, 14, 19, 23, 27}
-const coord_t MAX_BOUNDS[] = {4, 8, 12, 16, 21, 25, 29}
-
-const MatrixColor_t clear = {0, 0, 0};
-
 void initGraphicEq(GraphicEq_t *geq;) {
-  for (size_t i = 0; i < BARS_SIZE) {
+  for (size_t i = 0; i < BARS_SIZE; i++) {
     geq->bars[i] = 0;
   }
   
@@ -36,7 +24,7 @@ void setBarHeight(GraphicEq_t *geq, size_t bar, coord_t height, MatrixColor_t *c
   
   // If bar is shrinking, clear top parts
   if (height < prevHeight) {
-    setRect(geq->matrixState, height+1, xMin, prevHeight, xMax, clear);
+    setRect(geq->matrixState, height+1, xMin, prevHeight, xMax, CLEAR);
   }
   setRect(geq->matrixState, 0, xMin, height, xMax, color); // Now set new rectangle
 }

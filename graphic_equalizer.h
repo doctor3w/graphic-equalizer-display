@@ -16,6 +16,22 @@
  
  --***-***-***-****-***-***-***--
  01234567890123456789012345678901 //32 LEDS
+ 
+ */
+
+// Height and width of matrix display
+const uint8_t WIDTH = 32;
+const uint8_t HEIGHT = 16;
+
+const uint8_t MAX_HEIGHT = 15; // Max height of display value
+const size_t BARS_SIZE = 7; // Number of bars
+
+// Bar x-value bounds (inclusive)
+const coord_t MIN_BOUNDS[] = {2, 6, 10, 14, 19, 23, 27}
+const coord_t MAX_BOUNDS[] = {4, 8, 12, 16, 21, 25, 29}
+
+// Clear color (off) for matrix
+const MatrixColor_t CLEAR = {0, 0, 0};
 
 /**
  * Represents the 7 bar graphic equalizer.
