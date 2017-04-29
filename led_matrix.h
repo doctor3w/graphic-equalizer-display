@@ -9,8 +9,8 @@
 typedef uint8_t coord_t;
 
 // Dimension constants
-const coord_t matrix_row_count = 16;
-const coord_t matrix_col_count = 32;
+const coord_t MATRIX_ROW_COUNT = 16;
+const coord_t MATRIX_COL_COUNT = 32;
 
 /**
  * Represents the RGB color (r, g, b)
@@ -25,7 +25,7 @@ typedef struct MatrixColor {
 } MatrixColor_t;
 
 typedef struct MatrixState {
-  MatrixColor_t buffer[matrix_row_count][matrix_col_count];
+  MatrixColor_t buffer[MATRIX_ROW_COUNT][MATRIX_COL_COUNT];
 } MatrixState_t;
 
 /**
