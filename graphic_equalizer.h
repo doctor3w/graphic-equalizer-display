@@ -12,13 +12,29 @@
 #include <stdio.h>
 #include "led_matrix.h"
 
-// Struct with 7 bars' heights and a matrix display state
+/** BAR DISPLAY EXAMPLE
+ 
+ --***-***-***-****-***-***-***--
+ 01234567890123456789012345678901 //32 LEDS
+
+/**
+ * Represents the 7 bar graphic equalizer.
+ * Contains the height of the bar and the matrix display state.
+ * Each bar is an integer from 0-15, 15 being the max height
+ */
 typedef struct GraphicEqualizer {
     coord_t bars[7];
-    MatrixState_t *state;
+    MatrixState_t *matrixState;
 } GraphicEq_t;
 
-void graphicEqInit(GraphicEq_t *geq;);
-void graphicEqSetBarHeight(GraphicEq_t *geq, uint8_t bar, coord_t height);
+/**
+ * Initializes the bars to height 0 and inits the matrix state. 
+ */
+void initGraphicEq(GraphicEq_t *geq;);
+
+/**
+ * Sets [bars[bar]] to the height of [height] in [geq].
+ */
+void setBarHeight(GraphicEq_t *geq, size_t bar, coord_t height);
 
 #endif /* graphic_equalizer_h */
