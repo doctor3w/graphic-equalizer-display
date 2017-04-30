@@ -10,6 +10,7 @@
 #define msgeq7_h
 
 #include <stdio.h>
+#include "analog.h"
 
 /**
  * BANDS: 63Hz, 160Hz, 400Hz, 1kHz, 2.5kHz, 6.25kHz, 16kHz
