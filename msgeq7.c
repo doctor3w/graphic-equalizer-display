@@ -8,6 +8,8 @@
 
 #include "msgeq7.h"
 
+MSGEQ7_t *chip_state = NULL;
+
 /**
  * Inits the chip data to 0.
  */
@@ -16,6 +18,7 @@ void initMSGEQ7(MSGEQ7_t *chip) {
     chip->data[i] = 0;
   }
   initAnalogA0();
+  chip_state = chip;
 }
 
 /**

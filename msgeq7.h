@@ -23,6 +23,10 @@ const uint8_t STROBE_WIDTH_MIN = 18
 const uint8_t STROBE_TO_STROBE_DELAY_MIN = 72
 const uint8_t OUTPUT_STABILIZE_TIME = 36
 
+typedef enum {
+  Strobe
+} MSGEQ7_e;
+
 typedef struct MSGEQ7 {
   uint16_t data[7];
 } MSGEQ7_t;
