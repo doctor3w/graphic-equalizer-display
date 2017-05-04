@@ -25,7 +25,7 @@ MatrixState_t *matrix_current_state = NULL;
 void beginMatrix(MatrixState_t *matrix) {
   NVIC_EnableIRQ(PIT0_IRQn); /* enable PIT0 Interrupts */
 
-  SIM->SCGC6 = SIM_SCGC6_PIT_MASK; // Enable clock to PIT module
+  SIM->SCGC6 |= SIM_SCGC6_PIT_MASK; // Enable clock to PIT module
   PIT->MCR = 0;                    // Enables timers
   PIT->CHANNEL[0].LDVAL =
       DEFAULT_SYSTEM_CLOCK / MATRIX_ISR_FREQ; // Set load value of zeroth PIT
