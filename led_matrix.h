@@ -1,8 +1,8 @@
 #ifndef LED_MATRIX_H
 #define LED_MATRIX_H
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 // Row select
 #define MATRIX_A_LETTER C
@@ -54,17 +54,17 @@ typedef uint8_t coord_t;
  */
 typedef struct MatrixColor {
   uint8_t r;
-	uint8_t g;
-	uint8_t b;
+  uint8_t g;
+  uint8_t b;
 } MatrixColor_t;
 
-inline uint8_t extractR(MatrixColor_t* thing);
+inline uint8_t extractR(MatrixColor_t *thing);
 
-inline uint8_t extractG(MatrixColor_t* thing);
+inline uint8_t extractG(MatrixColor_t *thing);
 
-inline uint8_t extractB(MatrixColor_t* thing);
+inline uint8_t extractB(MatrixColor_t *thing);
 
-inline void createColor(uint8_t r, uint8_t g, uint8_t b, MatrixColor_t* thing);
+inline void createColor(uint8_t r, uint8_t g, uint8_t b, MatrixColor_t *thing);
 
 typedef struct MatrixState {
   MatrixColor_t buffer[MATRIX_ROW_COUNT][MATRIX_COL_COUNT];
