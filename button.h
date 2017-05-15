@@ -11,7 +11,7 @@
   PORT##LETTER->PCR[PIN] |= PORT_PCR_MUX(0x01);                                \
   PORT##LETTER->PCR[PIN] |= PORT_PCR_PE(1);                                    \
   PORT##LETTER->PCR[PIN] |= PORT_PCR_PS(0);                                    \
-  PORT##LETTER->PCR[PIN] |= PORT_PCR_IRQC(0x0001);                             \
+  PORT##LETTER->PCR[PIN] |= PORT_PCR_IRQC(0x1001);                             \
   PT##LETTER->PDDR &= ~(1 << PIN);
 #define DIGITAL_IN_ISR_TRIGGERED(LETTER, PIN)                                  \
   DIGITAL_IN_ISR_TRIGGERED_IMPL(LETTER, PIN)
