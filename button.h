@@ -21,12 +21,9 @@
 #define DIGITAL_IN_CLEAR_ISR_IMPL(LETTER, PIN)                                 \
   PORT##LETTER->PCR[PIN] &= ~(1 << 24)
 
-typedef struct ButtonState {
-  void (*callback)(void);
-} ButtonState_t
+typedef struct ButtonState { void (*callback)(void); } ButtonState_t;
 
-    void
-    initButtonState(ButtonState_t *state);
+void initButtonState(ButtonState_t *state);
 
 void setButtonCallback(ButtonState_t *state, void (*callback)(void));
 
