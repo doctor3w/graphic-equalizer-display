@@ -2,48 +2,49 @@
 #define LED_MATRIX_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 // Row select
-#define MATRIX_A_LETTER D
-#define MATRIX_A_PIN 1
-#define MATRIX_B_LETTER D
-#define MATRIX_B_PIN 1
-#define MATRIX_C_LETTER D
-#define MATRIX_C_PIN 1
+#define MATRIX_A_LETTER C
+#define MATRIX_A_PIN 3
+#define MATRIX_B_LETTER C
+#define MATRIX_B_PIN 2
+#define MATRIX_C_LETTER A
+#define MATRIX_C_PIN 2
 // Red
 #define MATRIX_R1_LETTER D
 #define MATRIX_R1_PIN 1
 #define MATRIX_R2_LETTER D
-#define MATRIX_R2_PIN 1
+#define MATRIX_R2_PIN 3
 // Green
-#define MATRIX_G1_LETTER D
-#define MATRIX_G1_PIN 1
-#define MATRIX_G2_LETTER D
-#define MATRIX_G2_PIN 1
+#define MATRIX_G1_LETTER C
+#define MATRIX_G1_PIN 4
+#define MATRIX_G2_LETTER C
+#define MATRIX_G2_PIN 12
 // Blue
 #define MATRIX_B1_LETTER D
-#define MATRIX_B1_PIN 1
+#define MATRIX_B1_PIN 2
 #define MATRIX_B2_LETTER D
-#define MATRIX_B2_PIN 1
+#define MATRIX_B2_PIN 0
 // Latching, output enable, clk
-#define MATRIX_LAT_LETTER D
-#define MATRIX_LAT_PIN 1
-#define MATRIX_CLK_LETTER D
+#define MATRIX_LAT_LETTER B
+#define MATRIX_LAT_PIN 23
+#define MATRIX_CLK_LETTER A
 #define MATRIX_CLK_PIN 1
-#define MATRIX_OE_LETTER D
-#define MATRIX_OE_PIN 1
+#define MATRIX_OE_LETTER B
+#define MATRIX_OE_PIN 9
+
+// Dimension constants
+#define MATRIX_ROW_COUNT 16
+#define MATRIX_COL_COUNT 32
+#define MATRIX_ISR_FREQ 1000
+#define MATRIX_RESOLUTION 128
+#define ROW_PAIR_OFFSET 8
 
 /**
  * Reprsents the type of a row or column index for the display
  */
 typedef uint8_t coord_t;
-
-// Dimension constants
-const coord_t MATRIX_ROW_COUNT = 16;
-const coord_t MATRIX_COL_COUNT = 32;
-const unsigned int MATRIX_ISR_FREQ = 10000;
-const uint8_t MATRIX_RESOLUTION = 16;
-const uint8_t ROW_PAIR_OFFSET = 8;
 
 /**
  * Represents the RGB color (r, g, b)
@@ -53,14 +54,22 @@ const uint8_t ROW_PAIR_OFFSET = 8;
  */
 typedef struct MatrixColor {
   uint8_t r;
-  uint8_t g;
-  uint8_t b;
+	uint8_t g;
+	uint8_t b;
 } MatrixColor_t;
+
+inline uint8_t extractR(MatrixColor_t* thing);
+
+inline uint8_t extractG(MatrixColor_t* thing);
+
+inline uint8_t extractB(MatrixColor_t* thing);
+
+inline void createColor(uint8_t r, uint8_t g, uint8_t b, MatrixColor_t* thing);
 
 typedef struct MatrixState {
   MatrixColor_t buffer[MATRIX_ROW_COUNT][MATRIX_COL_COUNT];
   coord_t row_pair;
-  uint8_t cycle_index;
+  coord_t cycle_index;
 } MatrixState_t;
 
 /**
@@ -68,14 +77,14 @@ typedef struct MatrixState {
  * The bottom left is (0,0)
  */
 void setPixel(MatrixState_t *matrix, coord_t row, coord_t col,
-              MatrixColor_t *color);
+              const MatrixColor_t *color);
 
 /**
  * Effect: sets all pixels (row, col) such that row_min <= row <= row_max &&
  * col_min <= col <= col_max to color.
  */
 void setRect(MatrixState_t *matrix, coord_t row_min, coord_t col_min,
-             coord_t row_max, coord_t col_max, MatrixColor_t *color);
+             coord_t row_max, coord_t col_max, const MatrixColor_t *color);
 
 /**
  * Effect: sets all the colors to 0

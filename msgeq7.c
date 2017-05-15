@@ -7,6 +7,23 @@
 //
 
 #include "msgeq7.h"
+//#include "fsl_debug_consol.h"
+
+// These are in micro seconds
+const uint8_t RESET_WIDTH_MIN = 100;
+const uint8_t RESET_TO_STROBE_DELAY_MIN = 72;
+const uint8_t STROBE_WIDTH_MIN = 18;
+const uint8_t STROBE_TO_STROBE_DELAY_MIN = 72;
+const uint8_t OUTPUT_STABILIZE_TIME = 36;
+
+// These need to be micro seconds
+const uint16_t RESET_WIDTH = 10;
+const uint16_t RESET_TO_STROBE = 200;
+const uint16_t STROBE_ON_DELAY = 100;
+const uint16_t STROBE_WIDTH = 100;
+const uint16_t OUTPUT_DELAY = 100;
+const uint16_t READ_TO_STROBE = 100;
+const uint16_t READ_TO_RESET = 10000;
 
 MSGEQ7_t *chip_state = NULL;
 
@@ -19,7 +36,7 @@ void initMSGEQ7(MSGEQ7_t *chip) {
   }
   initAnalogA0();
   chip_state = chip;
-  chip_state->readState = RESET;
+  chip_state->readState = RESET_ON;
 }
 
 /**
@@ -29,9 +46,12 @@ void beginMSGEQ7(MSGEQ7_t *chip) {
   // This enable might cause Hard Fault if second line has been called somewhere else
   NVIC_EnableIRQ(PIT1_IRQn);
   SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
-
+	
+  DIGITAL_OUT(CHIP_LETTER, CHIP_RESET_PIN);
+  DIGITAL_OUT(CHIP_LETTER, CHIP_STROBE_PIN);
+	
   // Need to load the timer
-  PIT->CHANNEL[1].LDVAL = 100; // Load the timer with frequency of reads
+  PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * 30 / 1000; // Load the timer with frequency of reads
   PIT->CHANNEL[1].TCTRL |= 0x3; // Enable interrupt and timer
   PIT->MCR &= !(1 << 1); // Disable MDIS
 }
@@ -61,37 +81,38 @@ void PIT1_IRQHandler(void) {
     case RESET_ON:
       resetOnChip();
       chip_state->readState = RESET_OFF;
-      PIT->CHANNEL[1].LDVAL = RESET_WIDTH;
+      PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * RESET_WIDTH / 1000000;
       break;
     case RESET_OFF:
       resetOffChip();
       chip_state->readState = STROBE_ON;
-      PIT->CHANNEL[1].LDVAL = RESET_TO_STROBE;
+      PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * RESET_TO_STROBE / 1000000;
       break;
     case STROBE_ON:
       strobeOn();
       chip_state->readState = STROBE_OFF;
-      PIT->CHANNEL[1].LDVAL = STROBE_WIDTH;
+      PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * STROBE_WIDTH / 1000000;
       break;
     case STROBE_OFF:
       strobeOff();
       chip_state->readState = READ;
-      PIT->CHANNEL[1].LDVAL = OUTPUT_DELAY;
+      PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * OUTPUT_DELAY / 1000000;
       break;
     case READ:
       // READ in
       chip_state->data[chip_state->index] = analogReadA0();
       chip_state->index++;
-      if (chip_state->index >= 7) {
+      if (chip_state->index > 6) {
         chip_state->readState = RESET_ON;
-        PIT->CHANNEL[1].LDVAL = READ_TO_STROBE;
+        PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 1000;
       } else {
         chip_state->readState = STROBE_ON;
-        PIT->CHANNEL[1].LDVAL = READ_TO_RESET;
+		//PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 10;
+        PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * READ_TO_STROBE / 1000000;
       }
       break;
   }
-  PIT->CHANNEL[1].TFLAG = 1;
+  PIT->CHANNEL[1].TFLG = 1;
 }
 
 /**
