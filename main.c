@@ -1,6 +1,6 @@
+#include "button.h"
 #include "graphic_equalizer.h"
 #include "msgeq7.h"
-//#include <fsl_debug_console.h>
 
 void barTest(void) {
   GraphicEq_t state;
@@ -128,6 +128,14 @@ void bigBarChangeTest(void) {
   }
 }
 
+volatile uint8_t color_scheme = 0;
+const uint8_t COLOR_SCHEME_COUNT = 2;
+
+void buttonCallback() {
+  color_scheme++;
+  color_scheme %= COLOR_SCHEME_COUNT;
+}
+
 void realMain() {
   MSGEQ7_t chipState;
   initMSGEQ7(&chipState);
@@ -137,15 +145,37 @@ void realMain() {
   initGraphicEq(&state);
   beginGraphicEq(&state);
 
+  ButtonState_t button;
+  initButtonState(&button);
+  setButtonCallback(&button, &buttonCallback);
+  beginButton(&button);
+
+  MatrixColor_t red;
+  createColor(255, 0, 0, &red);
+  MatrixColor_t green;
+  createColor(0, 255, 0, &green);
   MatrixColor_t blue;
   createColor(0, 0, 255, &blue);
+
+  MatrixColor_t purple;
+  createColor(255, 0, 255, &purple);
+  MatrixColor_t yellow;
+  createColor(255, 255, 0, &yellow);
+  MatrixColor_t cyan;
+  createColor(0, 255, 255, &cyan);
+
+  MatrixColor_t white;
+  createColor(255, 255, 255, &white);
+
+  MatrixColor_t *color_schemes[][] = {
+      {&blue, &blue, &blue, &blue, &blue, &blue, &blue},
+      {&red, &green, &blue, &purple, &yellow, &cyan, &white}};
 
   while (1) {
     for (size_t i = 0; i < 7; i++) {
       uint16_t data = chipState.data[i];
       coord_t height = 15 * data / 0xFFF;
-      // debug_printf("Index %d : %d", i, data);
-      setBarHeight(&state, i, height, &blue);
+      setBarHeight(&state, i, height, color_schemes[color_scheme][i]);
     }
   }
 }
