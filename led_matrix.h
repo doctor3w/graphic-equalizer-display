@@ -38,8 +38,8 @@
 // Dimension constants
 #define MATRIX_ROW_COUNT 16
 #define MATRIX_COL_COUNT 32
-#define MATRIX_ISR_FREQ 15000
-#define MATRIX_RESOLUTION 16
+#define MATRIX_ISR_FREQ 15000 // The frequency (hz) for updating rows
+#define MATRIX_RESOLUTION 16 // Gives us full 12 bit color, with 16 levels per channel
 #define ROW_PAIR_OFFSET 8
 
 /**
@@ -59,14 +59,14 @@ typedef struct MatrixColor {
   uint8_t b;
 } MatrixColor_t;
 
+// Extracts components from a color
 inline uint8_t extractR(MatrixColor_t *thing);
-
 inline uint8_t extractG(MatrixColor_t *thing);
-
 inline uint8_t extractB(MatrixColor_t *thing);
-
+// Creates a color
 inline void createColor(uint8_t r, uint8_t g, uint8_t b, MatrixColor_t *thing);
 
+// The state of the matrix
 typedef struct MatrixState {
   MatrixColor_t buffer[MATRIX_ROW_COUNT][MATRIX_COL_COUNT];
   coord_t row_pair;

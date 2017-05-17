@@ -5,6 +5,7 @@
 #include <fsl_debug_console.h>
 #include "color_utils.h"
 
+// Makes a bar
 void barTest(void) {
   GraphicEq_t state;
   initGraphicEq(&state);
@@ -16,6 +17,7 @@ void barTest(void) {
     ;
 }
 
+// Tests a pixel
 void pixelTest(void) {
   MatrixState_t state;
   initMatrixState(&state);
@@ -28,6 +30,7 @@ void pixelTest(void) {
     ;
 }
 
+// Makes rectangles
 void rectTest(void) {
   MatrixState_t state;
   initMatrixState(&state);
@@ -41,6 +44,7 @@ void rectTest(void) {
     ;
 }
 
+// Tries shading
 void shadingTest(void) {
   MatrixState_t state;
   initMatrixState(&state);
@@ -58,6 +62,7 @@ void shadingTest(void) {
     ;
 }
 
+// Displays nothing
 void nothingTest(void) {
   MatrixState_t state;
   initMatrixState(&state);
@@ -66,6 +71,7 @@ void nothingTest(void) {
     ;
 }
 
+// Tests the frequency chip
 void audioTest(void) {
   MSGEQ7_t chipState;
   initMSGEQ7(&chipState);
@@ -74,6 +80,8 @@ void audioTest(void) {
     ;
 }
 
+
+// Makes lots of bars
 void bigBarTest(void) {
   GraphicEq_t state;
   initGraphicEq(&state);
@@ -97,6 +105,7 @@ void bigBarTest(void) {
     ;
 }
 
+// Adjusts the heights of lots of bars
 void bigBarChangeTest(void) {
   GraphicEq_t state;
   initGraphicEq(&state);
@@ -131,6 +140,7 @@ void bigBarChangeTest(void) {
   }
 }
 
+// Tests the button by setting (0, 0) to white when the button is pushed
 MatrixState_t *test_state = NULL;
 
 void buttonTestCallback(void) {
@@ -141,17 +151,17 @@ void buttonTestCallback(void) {
 
 void buttonTest(void) {
   debug_printf("Starting Test...");
-	
+
   MatrixState_t state;
   initMatrixState(&state);
   beginMatrix(&state);
   test_state = &state;
-	
+
   ButtonState_t button;
   initButtonState(&button);
   setButtonCallback(&button, &buttonTestCallback);
   beginButton(&button);
-  
+
   while(1);
 }
 

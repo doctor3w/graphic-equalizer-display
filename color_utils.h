@@ -11,6 +11,7 @@
 void HSV2RGB(uint16_t hi, uint8_t si, uint8_t vi, uint8_t *ro, uint8_t *go,
              uint8_t *bo);
 
+// Maps the input in the range [in_min, in_max] to the range [out_min, out_max]
 float color_map(uint16_t in, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max);
 
 #endif
