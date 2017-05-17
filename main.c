@@ -99,11 +99,10 @@ void run_eq_display() {
         while (conv < 0)
           conv += 360;
         hue = (uint16_t)conv;
-        hue %= 360
+        hue %= 360;
 
-            // Convert the RGB
-            uint8_t r,
-            g, b;
+        // Convert the RGB
+        uint8_t r, g, b;
         HSV2RGB(hue, 255, 255, &r, &g, &b);
         createColor(r, g, b, &barColor);
       } else {
