@@ -1,9 +1,9 @@
 #include "button.h"
+#include "color_utils.h"
 #include "graphic_equalizer.h"
 #include "msgeq7.h"
 #include <board.h>
 #include <fsl_debug_console.h>
-#include "color_utils.h"
 
 // Makes a bar
 void barTest(void) {
@@ -79,7 +79,6 @@ void audioTest(void) {
   while (1)
     ;
 }
-
 
 // Makes lots of bars
 void bigBarTest(void) {
@@ -162,10 +161,11 @@ void buttonTest(void) {
   setButtonCallback(&button, &buttonTestCallback);
   beginButton(&button);
 
-  while(1);
+  while (1)
+    ;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   shadingTest();
   return 0;
 }

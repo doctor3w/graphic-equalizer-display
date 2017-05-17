@@ -64,10 +64,10 @@ void beginMatrix(MatrixState_t *matrix) {
   DIGITAL_OUT(MATRIX_OE_LETTER, MATRIX_OE_PIN);
 
   SIM->SCGC6 |= SIM_SCGC6_PIT_MASK; // Enable clock to PIT module
-  PIT->CHANNEL[0].LDVAL =
-      CLOCK_SYS_GetSystemClockFreq() / MATRIX_ISR_FREQ; // Set load value of zeroth PIT
-  PIT->CHANNEL[0].TCTRL = 3;                  // Enable Timer and Interrupts
-  PIT->MCR = 0;                               // Enables timers
+  PIT->CHANNEL[0].LDVAL = CLOCK_SYS_GetSystemClockFreq() /
+                          MATRIX_ISR_FREQ; // Set load value of zeroth PIT
+  PIT->CHANNEL[0].TCTRL = 3;               // Enable Timer and Interrupts
+  PIT->MCR = 0;                            // Enables timers
   matrix_current_state = matrix;
   matrix_current_state->row_pair = 0;
   matrix_current_state->cycle_index = 0;

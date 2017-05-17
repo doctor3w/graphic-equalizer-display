@@ -1,9 +1,9 @@
 #ifndef LED_MATRIX_H
 #define LED_MATRIX_H
 
+#include <fsl_clock_manager.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <fsl_clock_manager.h>
 
 // Row select
 #define MATRIX_A_LETTER C
@@ -39,7 +39,8 @@
 #define MATRIX_ROW_COUNT 16
 #define MATRIX_COL_COUNT 32
 #define MATRIX_ISR_FREQ 15000 // The frequency (hz) for updating rows
-#define MATRIX_RESOLUTION 16 // Gives us full 12 bit color, with 16 levels per channel
+#define MATRIX_RESOLUTION                                                      \
+  16 // Gives us full 12 bit color, with 16 levels per channel
 #define ROW_PAIR_OFFSET 8
 
 /**

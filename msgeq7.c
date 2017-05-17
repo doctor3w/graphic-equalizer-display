@@ -43,9 +43,9 @@ void initMSGEQ7(MSGEQ7_t *chip) {
  */
 void beginMSGEQ7(MSGEQ7_t *chip) {
   NVIC_EnableIRQ(PIT1_IRQn); // Enables the PIT timer
-  
+
   chip_state = chip; // Sets the current chip state
-	
+
   SIM->SCGC6 |= SIM_SCGC6_PIT_MASK; // Enables clock to PIT timer
 
   // Configures the digital out pins
@@ -56,7 +56,7 @@ void beginMSGEQ7(MSGEQ7_t *chip) {
   PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * 30 /
                           1000; // Load the timer with frequency of reads
   PIT->CHANNEL[1].TCTRL |= 0x3; // Enable interrupt and timer
-  PIT->MCR = 0;        // Disable MDIS
+  PIT->MCR = 0;                 // Disable MDIS
 }
 
 // Sets reset to HIGH value and resets the band index
@@ -83,36 +83,43 @@ void PIT1_IRQHandler(void) {
   case RESET_ON:
     resetOnChip();
     chip_state->readState = RESET_OFF;
-    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * RESET_WIDTH / 1000000; 
+    PIT->CHANNEL[1].LDVAL =
+        CLOCK_SYS_GetSystemClockFreq() * RESET_WIDTH / 1000000;
     break;
   case RESET_OFF:
     resetOffChip();
     chip_state->readState = STROBE_ON;
-    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * RESET_TO_STROBE / 1000000;
+    PIT->CHANNEL[1].LDVAL =
+        CLOCK_SYS_GetSystemClockFreq() * RESET_TO_STROBE / 1000000;
     break;
   case STROBE_ON:
     strobeOn();
     chip_state->readState = STROBE_OFF;
-    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * STROBE_WIDTH / 1000000;
+    PIT->CHANNEL[1].LDVAL =
+        CLOCK_SYS_GetSystemClockFreq() * STROBE_WIDTH / 1000000;
     break;
   case STROBE_OFF:
     strobeOff();
     chip_state->readState = READ;
-    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * OUTPUT_DELAY / 1000000;
+    PIT->CHANNEL[1].LDVAL =
+        CLOCK_SYS_GetSystemClockFreq() * OUTPUT_DELAY / 1000000;
     break;
   case READ:
     // READ in value
-	read = analogReadA0();
-	// Apply simple high pass filter
-	read = read * FREQ_ALPHA / 100 + (uint32_t)(chip_state->data[chip_state->index]) * (100 - FREQ_ALPHA) / 100;
+    read = analogReadA0();
+    // Apply simple high pass filter
+    read = read * FREQ_ALPHA / 100 +
+           (uint32_t)(chip_state->data[chip_state->index]) *
+               (100 - FREQ_ALPHA) / 100;
     chip_state->data[chip_state->index] = read; // Store
-    chip_state->index++; // increment to next band
+    chip_state->index++;                        // increment to next band
     if (chip_state->index > 6) {
       chip_state->readState = RESET_ON;
       PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() / 1000;
     } else {
       chip_state->readState = STROBE_ON;
-      PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * READ_TO_STROBE / 1000000;
+      PIT->CHANNEL[1].LDVAL =
+          CLOCK_SYS_GetSystemClockFreq() * READ_TO_STROBE / 1000000;
     }
     break;
   }

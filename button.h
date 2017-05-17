@@ -1,8 +1,8 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <fsl_device_registers.h>
 #include <fsl_debug_console.h>
+#include <fsl_device_registers.h>
 
 // The pin on the board that the button is plugged into
 #define BUTTON_LETTER B

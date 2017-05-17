@@ -38,7 +38,7 @@ MatrixColor_t GEQ_CLEAR; // Clear color so it's not inited every time
  */
 void beginGraphicEq(GraphicEq_t *geq) {
   createColor(0, 0, 0, &GEQ_CLEAR); // Creates a clear color to lower bar height
-  beginMatrix(&geq->matrixState); 
+  beginMatrix(&geq->matrixState);
 }
 
 /**
@@ -47,18 +47,17 @@ void beginGraphicEq(GraphicEq_t *geq) {
 void setBarHeight(GraphicEq_t *geq, size_t bar, coord_t height,
                   MatrixColor_t *color) {
   height = (height > MAX_HEIGHT) ? MAX_HEIGHT : height; // Maxes height with max
-  
+
   // Retrieves the bounds for the bar
   coord_t xMin = MIN_BOUNDS[bar];
   coord_t xMax = MAX_BOUNDS[bar];
   coord_t prevHeight = geq->bars[bar];
-
 
   // If bar is shrinking, clear top parts
   if (height < prevHeight) {
     setRect(&geq->matrixState, height + 1, xMin, prevHeight, xMax, &GEQ_CLEAR);
   }
   setRect(&geq->matrixState, 0, xMin, height, xMax,
-          color); // Now set new rectangle
+          color);          // Now set new rectangle
   geq->bars[bar] = height; // Set new height
 }

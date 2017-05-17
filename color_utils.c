@@ -64,7 +64,8 @@ void HSV2RGB(uint16_t hi, uint8_t si, uint8_t vi, uint8_t *ro, uint8_t *go,
   }
 }
 
-float color_map(uint16_t in, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max) {
+float color_map(uint16_t in, uint16_t in_min, uint16_t in_max, uint16_t out_min,
+                uint16_t out_max) {
   float i = in;
   return (i - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

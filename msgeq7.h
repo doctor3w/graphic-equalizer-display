@@ -11,8 +11,8 @@
 
 #include "analog.h"
 #include "gpio.h"
-#include <stdio.h>
 #include <fsl_clock_manager.h>
+#include <stdio.h>
 
 #define CHIP_LETTER C
 #define CHIP_STROBE_PIN 17
@@ -24,7 +24,7 @@
  * BANDS: 63Hz, 160Hz, 400Hz, 1kHz, 2.5kHz, 6.25kHz, 16kHz
  */
 
-/** 
+/**
  * State machine states for reading from the MSGEQ7 chip
  */
 typedef enum MSGEQ7_state {
