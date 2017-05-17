@@ -35,19 +35,20 @@ void initMSGEQ7(MSGEQ7_t *chip) {
     chip->data[i] = 0;
   }
   initAnalogA0();
-  chip_state = chip;
-  chip_state->readState = RESET_ON;
+  chip->readState = RESET_ON;
 }
 
 /**
  * Sets up and starts the timers to begin analog read in of data
  */
 void beginMSGEQ7(MSGEQ7_t *chip) {
-  // This enable might cause Hard Fault if second line has been called somewhere
-  // else
-  NVIC_EnableIRQ(PIT1_IRQn);
-  SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
+  NVIC_EnableIRQ(PIT1_IRQn); // Enables the PIT timer
+  
+  chip_state = chip; // Sets the current chip state
+	
+  SIM->SCGC6 |= SIM_SCGC6_PIT_MASK; // Enables clock to PIT timer
 
+  // Configures the digital out pins
   DIGITAL_OUT(CHIP_LETTER, CHIP_RESET_PIN);
   DIGITAL_OUT(CHIP_LETTER, CHIP_STROBE_PIN);
 
@@ -55,30 +56,34 @@ void beginMSGEQ7(MSGEQ7_t *chip) {
   PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * 30 /
                           1000; // Load the timer with frequency of reads
   PIT->CHANNEL[1].TCTRL |= 0x3; // Enable interrupt and timer
-  PIT->MCR &= !(1 << 1);        // Disable MDIS
+  PIT->MCR = 0;        // Disable MDIS
 }
 
+// Sets reset to HIGH value and resets the band index
 void resetOnChip() {
   chip_state->index = 0;
   DIGITAL_WRITE_HIGH(CHIP_LETTER, CHIP_RESET_PIN);
 }
 
+// Sets reset to LOW
 void resetOffChip() { DIGITAL_WRITE_LOW(CHIP_LETTER, CHIP_RESET_PIN); }
 
+// Sets strobe to HIGH
 void strobeOn() { DIGITAL_WRITE_HIGH(CHIP_LETTER, CHIP_STROBE_PIN); }
 
+// Sets strobe to LOW
 void strobeOff() { DIGITAL_WRITE_LOW(CHIP_LETTER, CHIP_STROBE_PIN); }
 
+// Handles the interrupt
 void PIT1_IRQHandler(void) {
-  uint32_t read;
-  // Strobe the strobe,
-  // Wait and turn off the strobe,
-  // Wait for stable and then reading
+  uint32_t read; // Declaration of read value
+  // RESET chip, STROBE chip, waits for chip output to stabilize,
+  // reads analog input, high pass filter the value
   switch (chip_state->readState) {
   case RESET_ON:
     resetOnChip();
     chip_state->readState = RESET_OFF;
-    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * RESET_WIDTH / 1000000;
+    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * RESET_WIDTH / 1000000; 
     break;
   case RESET_OFF:
     resetOffChip();
@@ -96,25 +101,27 @@ void PIT1_IRQHandler(void) {
     PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * OUTPUT_DELAY / 1000000;
     break;
   case READ:
-    // READ in
+    // READ in value
 	read = analogReadA0();
+	// Apply simple high pass filter
 	read = read * FREQ_ALPHA / 100 + (uint32_t)(chip_state->data[chip_state->index]) * (100 - FREQ_ALPHA) / 100;
-    chip_state->data[chip_state->index] = read;
-    chip_state->index++;
+    chip_state->data[chip_state->index] = read; // Store
+    chip_state->index++; // increment to next band
     if (chip_state->index > 6) {
       chip_state->readState = RESET_ON;
       PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() / 1000;
     } else {
       chip_state->readState = STROBE_ON;
-      // PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 10;
       PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * READ_TO_STROBE / 1000000;
     }
     break;
   }
-  PIT->CHANNEL[1].TFLG = 1;
+  PIT->CHANNEL[1].TFLG = 1; // Clear flag
 }
 
 /**
  * Stops the timers and data reads.
  */
-void endMSGEQ7(MSGEQ7_t *chip) {}
+void endMSGEQ7(MSGEQ7_t *chip) {
+  PIT->CHANNEL[1].TCTRL = 1; // Disable interrupt and timer
+}

@@ -24,6 +24,9 @@
  * BANDS: 63Hz, 160Hz, 400Hz, 1kHz, 2.5kHz, 6.25kHz, 16kHz
  */
 
+/** 
+ * State machine states for reading from the MSGEQ7 chip
+ */
 typedef enum MSGEQ7_state {
   RESET_ON,
   RESET_OFF,
@@ -32,6 +35,12 @@ typedef enum MSGEQ7_state {
   READ
 } ReadState;
 
+/**
+ * State of the MSGEQ7 chip
+ * Holds the previously read data for each band
+ * Holds the next state in the state machine
+ * And holds the next band to read
+ */
 typedef struct MSGEQ7 {
   uint16_t data[7];
   ReadState readState;

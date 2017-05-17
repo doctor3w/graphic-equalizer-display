@@ -18,7 +18,9 @@
 void initAnalogA0(void);
 
 /**
- * Reads in the value from A0 on the K64F board
+ * Reads in the value from A0 on the K64F board 
+ * (busy-waits until finished reading)
+ * Modified from the examples in K64F examples
  */
 uint16_t analogReadA0(void);
 

@@ -21,7 +21,7 @@
 
 /**
  * Represents the 7 bar graphic equalizer.
- * Contains the height of the bar and the matrix display state.
+ * Contains the height of the bars and the matrix display state.
  * Each bar is an integer from 0-15, 15 being the max height
  */
 typedef struct GraphicEqualizer {
@@ -34,6 +34,10 @@ typedef struct GraphicEqualizer {
  */
 void initGraphicEq(GraphicEq_t *geq);
 
+/**
+ * Begins running the display and updating the bar heights
+ * Must be called before calling setBarHeight
+ */
 void beginGraphicEq(GraphicEq_t *geq);
 
 /**
