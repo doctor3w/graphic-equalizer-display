@@ -12,10 +12,13 @@
 #include "analog.h"
 #include "gpio.h"
 #include <stdio.h>
+#include <fsl_clock_manager.h>
 
 #define CHIP_LETTER C
 #define CHIP_STROBE_PIN 17
 #define CHIP_RESET_PIN 16
+
+#define FREQ_ALPHA 10
 
 /**
  * BANDS: 63Hz, 160Hz, 400Hz, 1kHz, 2.5kHz, 6.25kHz, 16kHz

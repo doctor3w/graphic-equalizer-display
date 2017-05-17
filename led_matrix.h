@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <fsl_clock_manager.h>
 
 // Row select
 #define MATRIX_A_LETTER C
@@ -37,8 +38,8 @@
 // Dimension constants
 #define MATRIX_ROW_COUNT 16
 #define MATRIX_COL_COUNT 32
-#define MATRIX_ISR_FREQ 1000
-#define MATRIX_RESOLUTION 128
+#define MATRIX_ISR_FREQ 15000
+#define MATRIX_RESOLUTION 16
 #define ROW_PAIR_OFFSET 8
 
 /**

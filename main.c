@@ -1,142 +1,25 @@
 #include "button.h"
 #include "graphic_equalizer.h"
 #include "msgeq7.h"
+#include <board.h>
+#include <fsl_debug_console.h>
+#include "color_utils.h"
 
-void barTest(void) {
-  GraphicEq_t state;
-  initGraphicEq(&state);
-  beginGraphicEq(&state);
-  MatrixColor_t purple;
-  createColor(127, 0, 127, &purple);
-  setBarHeight(&state, 0, 5, &purple);
-  while (1)
-    ;
-}
+const uint16_t MAX_ITERS = 2000;
+volatile uint16_t loop_iters = 0;
+volatile uint8_t color_scheme = 0;
+const uint8_t COLOR_SCHEME_COUNT = 8;
+const uint8_t GRAD_COUNT = 5;
 
-void pixelTest(void) {
-  MatrixState_t state;
-  initMatrixState(&state);
-  beginMatrix(&state);
-  MatrixColor_t purple;
-  createColor(255, 0, 255, &purple);
-  setPixel(&state, 0, 0, &purple);
-  setPixel(&state, 15, 31, &purple);
-  while (1)
-    ;
-}
-
-void rectTest(void) {
-  MatrixState_t state;
-  initMatrixState(&state);
-  beginMatrix(&state);
-  MatrixColor_t purple;
-  createColor(255, 0, 255, &purple);
-  setRect(&state, 0, 10, 10, 20, &purple);
-  createColor(127, 0, 127, &purple);
-  setRect(&state, 0, 0, 10, 10, &purple);
-  while (1)
-    ;
-}
-
-void shadingTest(void) {
-  MatrixState_t state;
-  initMatrixState(&state);
-  beginMatrix(&state);
-  MatrixColor_t purple;
-  createColor(255, 0, 255, &purple);
-  setRect(&state, 0, 0, 10, 8, &purple);
-  createColor(191, 0, 191, &purple);
-  setRect(&state, 0, 7, 10, 15, &purple);
-  createColor(127, 0, 127, &purple);
-  setRect(&state, 0, 15, 10, 23, &purple);
-  createColor(63, 0, 63, &purple);
-  setRect(&state, 0, 23, 10, 31, &purple);
-  while (1)
-    ;
-}
-
-void nothingTest(void) {
-  MatrixState_t state;
-  initMatrixState(&state);
-  beginMatrix(&state);
-  while (1)
-    ;
-}
-
-void audioTest(void) {
-  MSGEQ7_t chipState;
-  initMSGEQ7(&chipState);
-  beginMSGEQ7(&chipState);
-  while (1)
-    ;
-}
-
-void bigBarTest(void) {
-  GraphicEq_t state;
-  initGraphicEq(&state);
-  beginGraphicEq(&state);
-  MatrixColor_t purple;
-  createColor(255, 0, 255, &purple);
-  setBarHeight(&state, 0, 5, &purple);
-  createColor(255, 0, 127, &purple);
-  setBarHeight(&state, 1, 10, &purple);
-  createColor(0, 0, 255, &purple);
-  setBarHeight(&state, 2, 7, &purple);
-  createColor(255, 0, 0, &purple);
-  setBarHeight(&state, 3, 15, &purple);
-  createColor(0, 255, 255, &purple);
-  setBarHeight(&state, 4, 9, &purple);
-  createColor(0, 255, 0, &purple);
-  setBarHeight(&state, 5, 3, &purple);
-  createColor(0, 127, 0, &purple);
-  setBarHeight(&state, 6, 6, &purple);
-  while (1)
-    ;
-}
-
-void bigBarChangeTest(void) {
-  GraphicEq_t state;
-  initGraphicEq(&state);
-  beginGraphicEq(&state);
-  MatrixColor_t purple;
-  int offset = 0;
-  int dir = 1;
-  while (1) {
-    createColor(255, 0, 255, &purple);
-    setBarHeight(&state, 0, 5 + offset, &purple);
-    createColor(255, 0, 127, &purple);
-    setBarHeight(&state, 1, 10 + offset, &purple);
-    createColor(0, 0, 255, &purple);
-    setBarHeight(&state, 2, 7 + offset, &purple);
-    createColor(255, 0, 0, &purple);
-    setBarHeight(&state, 3, 15 + offset, &purple);
-    createColor(0, 255, 255, &purple);
-    setBarHeight(&state, 4, 9 + offset, &purple);
-    createColor(0, 255, 0, &purple);
-    setBarHeight(&state, 5, 3 + offset, &purple);
-    createColor(0, 127, 0, &purple);
-    setBarHeight(&state, 6, 6 + offset, &purple);
-    for (int x = 0; x < 1000000; x++)
-      ;
-    offset += dir;
-    if (offset == 10) {
-      dir = -1;
-    }
-    if (offset == 0) {
-      dir = 1;
-    }
+void buttonCallback() {
+  if (loop_iters == MAX_ITERS) {
+	color_scheme++;
+    color_scheme %= (COLOR_SCHEME_COUNT + GRAD_COUNT);
+	loop_iters = 0;
   }
 }
 
-volatile uint8_t color_scheme = 0;
-const uint8_t COLOR_SCHEME_COUNT = 2;
-
-void buttonCallback() {
-  color_scheme++;
-  color_scheme %= COLOR_SCHEME_COUNT;
-}
-
-void realMain() {
+void run_eq_display() {
   MSGEQ7_t chipState;
   initMSGEQ7(&chipState);
   beginMSGEQ7(&chipState);
@@ -167,21 +50,50 @@ void realMain() {
   MatrixColor_t white;
   createColor(255, 255, 255, &white);
 
-  MatrixColor_t *color_schemes[][] = {
+  MatrixColor_t *color_schemes[][7] = {
       {&blue, &blue, &blue, &blue, &blue, &blue, &blue},
+	  {&red, &red, &red, &red, &red, &red, &red},
+	  {&green, &green, &green, &green, &green, &green, &green},
+	  {&purple, &purple, &purple, &purple, &purple, &purple, &purple},
+	  {&yellow, &yellow, &yellow, &yellow, &yellow, &yellow, &yellow},
+	  {&cyan, &cyan, &cyan, &cyan, &cyan, &cyan, &cyan},
+	  {&white, &white, &white, &white, &white, &white, &white},
       {&red, &green, &blue, &purple, &yellow, &cyan, &white}};
+  
+  // {a, b, c, d} remaps 0-360 to a-b, then multiplies it by -1 if d==1 and 1 if d==0. Then adds c.
+  uint16_t grad_schemes[][6] = {
+	  {0, 240, 230, 1}, // really cool
+	  {240, 360, 0, 0}, // Blue spice
+	  {0, 360, 0, 0}, // rainbow
+	  {220, 320, 0, 0}, // coral
+	  {0, 70, 60, 1} // extra spicy
+  };
 
   while (1) {
     for (size_t i = 0; i < 7; i++) {
       uint16_t data = chipState.data[i];
       coord_t height = 15 * data / 0xFFF;
-      setBarHeight(&state, i, height, color_schemes[color_scheme][i]);
+	  MatrixColor_t barColor;
+	  if (color_scheme < GRAD_COUNT) {
+		uint16_t hue = height * 360 / 15;
+		  float conv = grad_schemes[color_scheme][2] + color_map(hue, 0, 360, grad_schemes[color_scheme][0], grad_schemes[color_scheme][1]) * (grad_schemes[color_scheme][3] == 1 ? -1 : 1);
+		if (conv < 0) conv += 360; 
+		hue = (uint16_t)conv;
+		uint8_t r, g, b;
+		HSV2RGB(hue, 255, 255, &r, &g, &b);
+		createColor(r, g, b, &barColor);
+	  } else {
+	    barColor = *color_schemes[color_scheme - GRAD_COUNT][i];
+	  }
+      setBarHeight(&state, i, height, &barColor);
     }
+	if (loop_iters < MAX_ITERS)
+      loop_iters++;
   }
 }
 
 int main(int count, char **args) {
-  // bigBarChangeTest();
-  realMain();
+  hardware_init();
+  run_eq_display();
   return 0;
 }

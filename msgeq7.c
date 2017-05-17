@@ -70,6 +70,7 @@ void strobeOn() { DIGITAL_WRITE_HIGH(CHIP_LETTER, CHIP_STROBE_PIN); }
 void strobeOff() { DIGITAL_WRITE_LOW(CHIP_LETTER, CHIP_STROBE_PIN); }
 
 void PIT1_IRQHandler(void) {
+  uint32_t read;
   // Strobe the strobe,
   // Wait and turn off the strobe,
   // Wait for stable and then reading
@@ -77,34 +78,36 @@ void PIT1_IRQHandler(void) {
   case RESET_ON:
     resetOnChip();
     chip_state->readState = RESET_OFF;
-    PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * RESET_WIDTH / 1000000;
+    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * RESET_WIDTH / 1000000;
     break;
   case RESET_OFF:
     resetOffChip();
     chip_state->readState = STROBE_ON;
-    PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * RESET_TO_STROBE / 1000000;
+    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * RESET_TO_STROBE / 1000000;
     break;
   case STROBE_ON:
     strobeOn();
     chip_state->readState = STROBE_OFF;
-    PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * STROBE_WIDTH / 1000000;
+    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * STROBE_WIDTH / 1000000;
     break;
   case STROBE_OFF:
     strobeOff();
     chip_state->readState = READ;
-    PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * OUTPUT_DELAY / 1000000;
+    PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * OUTPUT_DELAY / 1000000;
     break;
   case READ:
     // READ in
-    chip_state->data[chip_state->index] = analogReadA0();
+	read = analogReadA0();
+	read = read * FREQ_ALPHA / 100 + (uint32_t)(chip_state->data[chip_state->index]) * (100 - FREQ_ALPHA) / 100;
+    chip_state->data[chip_state->index] = read;
     chip_state->index++;
     if (chip_state->index > 6) {
       chip_state->readState = RESET_ON;
-      PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 1000;
+      PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() / 1000;
     } else {
       chip_state->readState = STROBE_ON;
       // PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 10;
-      PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK * READ_TO_STROBE / 1000000;
+      PIT->CHANNEL[1].LDVAL = CLOCK_SYS_GetSystemClockFreq() * READ_TO_STROBE / 1000000;
     }
     break;
   }

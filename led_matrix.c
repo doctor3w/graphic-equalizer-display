@@ -65,7 +65,7 @@ void beginMatrix(MatrixState_t *matrix) {
 
   SIM->SCGC6 |= SIM_SCGC6_PIT_MASK; // Enable clock to PIT module
   PIT->CHANNEL[0].LDVAL =
-      DEFAULT_SYSTEM_CLOCK / MATRIX_ISR_FREQ; // Set load value of zeroth PIT
+      CLOCK_SYS_GetSystemClockFreq() / MATRIX_ISR_FREQ; // Set load value of zeroth PIT
   PIT->CHANNEL[0].TCTRL = 3;                  // Enable Timer and Interrupts
   PIT->MCR = 0;                               // Enables timers
   matrix_current_state = matrix;

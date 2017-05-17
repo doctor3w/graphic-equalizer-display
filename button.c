@@ -8,9 +8,12 @@ void setButtonCallback(ButtonState_t *state, void (*callback)(void)) {
 
 volatile ButtonState_t *current_button_state = NULL;
 
+size_t pin = 18;
+
 void beginButton(ButtonState_t *state) {
   // configure the pin as an input and set up the interrupt
-  DIGITAL_IN_ISR(BUTTON_LETTER, BUTTON_PIN);
+  NVIC_EnableIRQ(BUTTON_ISR_ENABLE(BUTTON_LETTER));
+  DIGITAL_IN_ISR(BUTTON_LETTER, BUTTON_PIN)
   current_button_state = state;
 }
 
